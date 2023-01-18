@@ -19,9 +19,6 @@ def get_all_submenus(menu_id: uuid.UUID, db: Session = Depends(get_db)):
     submenus = submenu_service.get_all(db, menu_id)
     if not submenus:
         return []
-    # set value to dishes_count
-    for submenu in submenus:
-        submenu.dishes_count = len(submenu.dish)
 
     return submenus
 
@@ -32,8 +29,6 @@ def get_single_submenu_by_id(submenu_id: uuid.UUID, db: Session = Depends(get_db
     get single submenu by id
     """
     submenu = submenu_service.get_single_by_id(db, submenu_id)
-    # set value to dishes_count
-    submenu.dishes_count = len(submenu.dish)
 
     return submenu
 

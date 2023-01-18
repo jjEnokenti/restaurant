@@ -1,15 +1,26 @@
 from fastapi import HTTPException, status
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 
-from menu.models import Submenu
+from menu.models import Submenu, Dish
 
 
-def get_all(db: Session,  menu_id):
+def get_all(db: Session, menu_id):
     """
     get all submenus from db
     """
     try:
-        submenus = db.query(Submenu).filter(Submenu.menu_id == menu_id).all()
+        submenus_query = db.query(
+            Submenu.id,
+            Submenu.title,
+            Submenu.description,
+            func.count(Dish.id).label("dishes_count")
+        ). \
+            group_by(Submenu.id, Submenu.title, Submenu.description). \
+            outerjoin(Dish, Dish.submenu_id == Submenu.id). \
+            filter(Submenu.menu_id == menu_id)
+
+        submenus = submenus_query.all()
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_200_OK,
                             detail=f"error message: {e}")
@@ -23,8 +34,17 @@ def get_single_by_id(db: Session, submenu_id):
     """
     try:
 
-        submenu = db.query(Submenu).filter(Submenu.id == submenu_id).first()
+        submenu_query = db.query(
+            Submenu.id,
+            Submenu.title,
+            Submenu.description,
+            func.count(Dish.id).label("dishes_count")
+        ). \
+            group_by(Submenu.id, Submenu.title, Submenu.description). \
+            outerjoin(Dish, Dish.submenu_id == Submenu.id). \
+            filter(Submenu.id == submenu_id)
 
+        submenu = submenu_query.first()
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_200_OK,
                             detail=f"error message: {e}")
