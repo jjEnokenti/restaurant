@@ -2,11 +2,11 @@ import uvicorn
 from fastapi import Request, Response
 from menu.core import SessionLocal
 
-from menu import create_app
+from menu import create_app, init_db
 
 
 app = create_app()
-# init_db()
+init_db()
 
 
 @app.middleware("http")

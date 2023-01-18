@@ -17,7 +17,7 @@ def get_all(db: Session):
             func.count(Submenu.id).label("submenus_count"),
             func.count(Dish.id).label("dishes_count")
         ).\
-            group_by(Menu.id, Menu.title, Menu.description).\
+            group_by(Menu.id).\
             outerjoin(Submenu, Menu.id == Submenu.menu_id).\
             outerjoin(Dish, Dish.submenu_id == Submenu.id)
 
@@ -42,7 +42,7 @@ def get_single_by_id(db: Session, menu_id):
             func.count(Submenu.id).label("submenus_count"),
             func.count(Dish.id).label("dishes_count")
         ). \
-            group_by(Menu.id, Menu.title, Menu.description). \
+            group_by(Menu.id). \
             outerjoin(Submenu, Menu.id == Submenu.menu_id). \
             outerjoin(Dish, Dish.submenu_id == Submenu.id).\
             filter(Menu.id == menu_id)
