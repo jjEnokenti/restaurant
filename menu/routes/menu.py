@@ -21,13 +21,6 @@ def get_all_menu(db: Session = Depends(get_db)):
     if not menus:
         return []
 
-    # set value to dishes_count and submenus_count
-    for menu in menus:
-        menu.dishes_count = 0
-        menu.submenus_count = len(menu.submenu)
-        for submenu in menu.submenu:
-            menu.dishes_count += len(submenu.dish)
-
     return menus
 
 
@@ -37,12 +30,6 @@ def get_menu_by_id(menu_id: uuid.UUID, db: Session = Depends(get_db)):
     get single menu by id
     """
     menu = menu_service.get_single_by_id(db, menu_id)
-
-    # set value to dishes_count and submenus_count
-    menu.submenus_count = len(menu.submenu)
-    menu.dishes_count = 0
-    for submenu in menu.submenu:
-        menu.dishes_count += len(submenu.dish)
 
     return menu
 

@@ -14,5 +14,5 @@ class Menu(Base):
     title = Column(String(255), unique=True, nullable=False)
     description = Column(String(255))
 
-    submenu = relationship("Submenu", cascade="all, delete", lazy='joined')
+    submenu = relationship("Submenu", cascade="all, delete", lazy='select')
 

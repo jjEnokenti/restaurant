@@ -16,4 +16,4 @@ class Submenu(Base):
 
     menu_id = Column(UUID(as_uuid=True), ForeignKey("menu.id"))
 
-    dish = relationship("Dish", cascade="all, delete", lazy='joined')
+    dish = relationship("Dish", cascade="all, delete", lazy='select')
