@@ -1,6 +1,6 @@
 from fastapi import HTTPException, status
+from sqlalchemy import func, distinct
 from sqlalchemy.orm import Session
-from sqlalchemy import func
 
 from menu.models import Menu, Submenu, Dish
 
@@ -14,12 +14,12 @@ def get_all(db: Session):
             Menu.id,
             Menu.title,
             Menu.description,
-            func.count(Submenu.id).label("submenus_count"),
+            func.count(distinct(Submenu.id)).label("submenus_count"),
             func.count(Dish.id).label("dishes_count")
-        ).\
-            group_by(Menu.id).\
-            outerjoin(Submenu, Menu.id == Submenu.menu_id).\
-            outerjoin(Dish, Dish.submenu_id == Submenu.id)
+        ) \
+            .group_by(Menu.id) \
+            .outerjoin(Submenu, Menu.id == Submenu.menu_id) \
+            .outerjoin(Dish, Submenu.id == Dish.submenu_id)
 
         menus = menus_query.all()
 
@@ -39,12 +39,12 @@ def get_single_by_id(db: Session, menu_id):
             Menu.id,
             Menu.title,
             Menu.description,
-            func.count(Submenu.id).label("submenus_count"),
+            func.count(distinct(Submenu.id)).label("submenus_count"),
             func.count(Dish.id).label("dishes_count")
         ). \
             group_by(Menu.id). \
             outerjoin(Submenu, Menu.id == Submenu.menu_id). \
-            outerjoin(Dish, Dish.submenu_id == Submenu.id).\
+            outerjoin(Dish, Dish.submenu_id == Submenu.id). \
             filter(Menu.id == menu_id)
 
         menu = menu_query.first()

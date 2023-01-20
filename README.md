@@ -1,15 +1,11 @@
 <h2> Restaurant menu API</h2>
 
-### Зависимости:
+### `Зависимости:`
 1. requirements.txt
 2. .env
 #### `установите пакеты из requirements.txt командой:`
     $ pip install -r requirements.txt
-#### ```создайте файл .env и запишите туда ваши значения:```
-1. USER=?
-2. PASSWORD=?
-3. HOST=?
-4. DB_NAME=?
+#### `создайте файл .env по примеру example.env`
 
 #### `Запускайте приложение командой:`
     $ uvicorn run:app --reload

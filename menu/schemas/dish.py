@@ -1,6 +1,4 @@
-import uuid
-
-from pydantic import BaseModel
+from pydantic import BaseModel, UUID4
 
 
 class DishBase(BaseModel):
@@ -35,4 +33,4 @@ class DishRead(DishBase):
     """
     read schema
     """
-    id: uuid.UUID
+    id: UUID4
