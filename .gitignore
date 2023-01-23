@@ -2,6 +2,6 @@
 **__pycache__/
 venv/
 .git/
-
+**.pytest_cache/
 .env
 alembic/versions/*.py
