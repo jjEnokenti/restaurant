@@ -54,13 +54,15 @@ def get_single_by_id(db: Session, submenu_id):
             filter(s.Submenu.id == submenu_id)
 
         submenu = submenu_query.first()
+
     except Exception as e:
         raise HTTPException(status_code=status.HTTP_200_OK,
                             detail=f"error message: {e}")
     else:
         if not submenu:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                                detail=f"submenu not found")
+                                detail="submenu not found")
+
         return submenu
 
 

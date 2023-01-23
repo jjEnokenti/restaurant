@@ -1,6 +1,6 @@
 import uuid
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 
 import menu_app.services.submenu as submenu_service
@@ -11,7 +11,7 @@ from menu_app.schemas import submenu as s
 submenu_route = APIRouter()
 
 
-@submenu_route.get("/submenus", response_model=list[s.SubmenuRead], status_code=200)
+@submenu_route.get("/submenus", response_model=list[s.SubmenuRead], status_code=status.HTTP_200_OK)
 def get_all_submenus(menu_id: uuid.UUID, db: Session = Depends(get_db)):
     """
     get all submenus
@@ -23,7 +23,7 @@ def get_all_submenus(menu_id: uuid.UUID, db: Session = Depends(get_db)):
     return submenus
 
 
-@submenu_route.get("/submenus/{submenu_id}", response_model=s.SubmenuRead, status_code=200)
+@submenu_route.get("/submenus/{submenu_id}", response_model=s.SubmenuRead, status_code=status.HTTP_200_OK)
 def get_single_submenu_by_id(submenu_id: uuid.UUID, db: Session = Depends(get_db)):
     """
     get single submenu by id
@@ -33,7 +33,7 @@ def get_single_submenu_by_id(submenu_id: uuid.UUID, db: Session = Depends(get_db
     return submenu
 
 
-@submenu_route.post("/submenus", response_model=s.SubmenuRead, status_code=201)
+@submenu_route.post("/submenus", response_model=s.SubmenuRead, status_code=status.HTTP_201_CREATED)
 def create_submenu(menu_id: uuid.UUID, create_data: s.SubmenuCreate, db: Session = Depends(get_db)):
     """
     create submenu
@@ -43,7 +43,7 @@ def create_submenu(menu_id: uuid.UUID, create_data: s.SubmenuCreate, db: Session
     return new_submenu
 
 
-@submenu_route.patch("/submenus/{submenu_id}", response_model=s.SubmenuRead, status_code=200)
+@submenu_route.patch("/submenus/{submenu_id}", response_model=s.SubmenuRead, status_code=status.HTTP_200_OK)
 def update_submenu_by_id(submenu_id: uuid.UUID, update_data: s.SubmenuUpdate, db: Session = Depends(get_db)):
     """
     update submenu by id
@@ -53,7 +53,7 @@ def update_submenu_by_id(submenu_id: uuid.UUID, update_data: s.SubmenuUpdate, db
     return updated_submenu
 
 
-@submenu_route.delete("/submenus/{submenu_id}", status_code=200)
+@submenu_route.delete("/submenus/{submenu_id}", status_code=status.HTTP_200_OK)
 def delete_submenu_by_id(submenu_id: uuid.UUID, db: Session = Depends(get_db)):
     """
     delete submenu by id

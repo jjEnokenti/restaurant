@@ -64,7 +64,7 @@ def get_single_by_id(db: Session, menu_id):
     else:
         if not menu:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                                detail=f"menu not found")
+                                detail="menu not found")
 
         return menu
 

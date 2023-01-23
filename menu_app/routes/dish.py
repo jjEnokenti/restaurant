@@ -1,6 +1,6 @@
 import uuid
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 
 import menu_app.services.dish as dish_service
@@ -11,7 +11,7 @@ from menu_app.schemas import dish as d
 dish_route = APIRouter()
 
 
-@dish_route.get("/dishes", response_model=list[d.DishRead], status_code=200)
+@dish_route.get("/dishes", response_model=list[d.DishRead], status_code=status.HTTP_200_OK)
 def get_all_dishes(submenu_id: uuid.UUID, db: Session = Depends(get_db)):
     """
     get all dishes
@@ -23,7 +23,7 @@ def get_all_dishes(submenu_id: uuid.UUID, db: Session = Depends(get_db)):
     return dishes
 
 
-@dish_route.get("/dishes/{dish_id}", response_model=d.DishRead, status_code=200)
+@dish_route.get("/dishes/{dish_id}", response_model=d.DishRead, status_code=status.HTTP_200_OK)
 def get_dish_by_id(dish_id: uuid.UUID, db: Session = Depends(get_db)):
     """
     get single dish by id
@@ -33,7 +33,7 @@ def get_dish_by_id(dish_id: uuid.UUID, db: Session = Depends(get_db)):
     return dish
 
 
-@dish_route.post("/dishes", response_model=d.DishRead, status_code=201)
+@dish_route.post("/dishes", response_model=d.DishRead, status_code=status.HTTP_201_CREATED)
 def create_dish(submenu_id: uuid.UUID, create_data: d.DishCreate, db: Session = Depends(get_db)):
     """
     create new dish
@@ -43,7 +43,7 @@ def create_dish(submenu_id: uuid.UUID, create_data: d.DishCreate, db: Session = 
     return new_dish
 
 
-@dish_route.patch("/dishes/{dish_id}", response_model=d.DishRead, status_code=200)
+@dish_route.patch("/dishes/{dish_id}", response_model=d.DishRead, status_code=status.HTTP_200_OK)
 def update_dish_by_id(dish_id: uuid.UUID, update_data: d.DishUpdate, db: Session = Depends(get_db)):
     """
     update dish by id
@@ -53,7 +53,7 @@ def update_dish_by_id(dish_id: uuid.UUID, update_data: d.DishUpdate, db: Session
     return updated_dish
 
 
-@dish_route.delete("/dishes/{dish_id}", status_code=200)
+@dish_route.delete("/dishes/{dish_id}", status_code=status.HTTP_200_OK)
 def delete_dish_by_id(dish_id: uuid.UUID, db: Session = Depends(get_db)):
     """
     delete dish by id

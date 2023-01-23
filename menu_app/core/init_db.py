@@ -1,4 +1,4 @@
-from menu_app.core.setup_db import db, Base
+from menu_app.core.setup_db import Base
 from menu_app.models.menu import Menu
 from menu_app.models.submenu import Submenu
 from menu_app.models.dish import Dish

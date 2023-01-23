@@ -40,7 +40,8 @@ def get_single_by_id(db: Session, dish_id):
     else:
         if not dish:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                                detail=f"dish not found")
+                                detail="dish not found")
+
         return dish
 
 
