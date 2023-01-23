@@ -2,7 +2,16 @@ from fastapi import HTTPException, status
 from sqlalchemy import func, distinct
 from sqlalchemy.orm import Session
 
-from menu.models import Menu, Submenu, Dish
+from menu_app.models import menu as m, dish as d, submenu as s
+
+
+__all__ = [
+    "get_all",
+    "get_single_by_id",
+    "create",
+    "update",
+    "delete"
+]
 
 
 def get_all(db: Session):
@@ -11,15 +20,15 @@ def get_all(db: Session):
     """
     try:
         menus_query = db.query(
-            Menu.id,
-            Menu.title,
-            Menu.description,
-            func.count(distinct(Submenu.id)).label("submenus_count"),
-            func.count(Dish.id).label("dishes_count")
+            m.Menu.id,
+            m.Menu.title,
+            m.Menu.description,
+            func.count(distinct(s.Submenu.id)).label("submenus_count"),
+            func.count(d.Dish.id).label("dishes_count")
         ) \
-            .group_by(Menu.id) \
-            .outerjoin(Submenu, Menu.id == Submenu.menu_id) \
-            .outerjoin(Dish, Submenu.id == Dish.submenu_id)
+            .group_by(m.Menu.id) \
+            .outerjoin(s.Submenu, m.Menu.id == s.Submenu.menu_id) \
+            .outerjoin(d.Dish, s.Submenu.id == d.Dish.submenu_id)
 
         menus = menus_query.all()
 
@@ -36,16 +45,16 @@ def get_single_by_id(db: Session, menu_id):
     """
     try:
         menu_query = db.query(
-            Menu.id,
-            Menu.title,
-            Menu.description,
-            func.count(distinct(Submenu.id)).label("submenus_count"),
-            func.count(Dish.id).label("dishes_count")
+            m.Menu.id,
+            m.Menu.title,
+            m.Menu.description,
+            func.count(distinct(s.Submenu.id)).label("submenus_count"),
+            func.count(d.Dish.id).label("dishes_count")
         ). \
-            group_by(Menu.id). \
-            outerjoin(Submenu, Menu.id == Submenu.menu_id). \
-            outerjoin(Dish, Dish.submenu_id == Submenu.id). \
-            filter(Menu.id == menu_id)
+            group_by(m.Menu.id). \
+            outerjoin(s.Submenu, m.Menu.id == s.Submenu.menu_id). \
+            outerjoin(d.Dish, d.Dish.submenu_id == s.Submenu.id). \
+            filter(m.Menu.id == menu_id)
 
         menu = menu_query.first()
 
@@ -65,7 +74,7 @@ def create(db: Session, create_data):
     insert new menu into db
     """
     try:
-        new_menu = Menu(**create_data.dict())
+        new_menu = m.Menu(**create_data.dict())
         db.add(new_menu)
         db.commit()
         db.refresh(new_menu)
@@ -82,7 +91,7 @@ def update(db: Session, menu_id, update_data):
     update single menu by id into db
     """
     try:
-        menu_query = db.query(Menu).filter(Menu.id == menu_id)
+        menu_query = db.query(m.Menu).filter(m.Menu.id == menu_id)
         updated_menu = menu_query.first()
 
         if not updated_menu:
@@ -104,7 +113,7 @@ def delete(db: Session, menu_id):
     delete single menu by id from db
     """
     try:
-        menu_query = db.query(Menu)
+        menu_query = db.query(m.Menu)
         menu = menu_query.get(menu_id)
         if not menu:
             raise ValueError(f"menu with: id {menu_id} not found")

@@ -4,7 +4,12 @@ from sqlalchemy import Column, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
-from menu.core import Base
+from menu_app.core.setup_db import Base
+
+
+__all__ = [
+    "Menu"
+]
 
 
 class Menu(Base):
@@ -14,7 +19,7 @@ class Menu(Base):
     title = Column(String(255), unique=True, nullable=False)
     description = Column(String(255))
 
-    submenu = relationship("Submenu", back_populates="menu", cascade="all, delete-orphan")
+    submenu = relationship("Submenu", back_populates="menu", cascade="all, delete, delete-orphan")
 
     def __repr__(self):
         return f"{self.id}, {self.title}, {self.description}"

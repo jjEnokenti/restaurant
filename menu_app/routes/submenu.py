@@ -3,15 +3,15 @@ import uuid
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
-import menu.services.submenu as submenu_service
-from menu.dependences import get_db
-from menu.schemas import SubmenuCreate, SubmenuRead, SubmenuUpdate
+import menu_app.services.submenu as submenu_service
+from menu_app.dependences import get_db
+from menu_app.schemas import submenu as s
 
 
 submenu_route = APIRouter()
 
 
-@submenu_route.get("/submenus", response_model=list[SubmenuRead], status_code=200)
+@submenu_route.get("/submenus", response_model=list[s.SubmenuRead], status_code=200)
 def get_all_submenus(menu_id: uuid.UUID, db: Session = Depends(get_db)):
     """
     get all submenus
@@ -23,7 +23,7 @@ def get_all_submenus(menu_id: uuid.UUID, db: Session = Depends(get_db)):
     return submenus
 
 
-@submenu_route.get("/submenus/{submenu_id}", response_model=SubmenuRead, status_code=200)
+@submenu_route.get("/submenus/{submenu_id}", response_model=s.SubmenuRead, status_code=200)
 def get_single_submenu_by_id(submenu_id: uuid.UUID, db: Session = Depends(get_db)):
     """
     get single submenu by id
@@ -33,8 +33,8 @@ def get_single_submenu_by_id(submenu_id: uuid.UUID, db: Session = Depends(get_db
     return submenu
 
 
-@submenu_route.post("/submenus", response_model=SubmenuRead, status_code=201)
-def create_submenu(menu_id: uuid.UUID, create_data: SubmenuCreate, db: Session = Depends(get_db)):
+@submenu_route.post("/submenus", response_model=s.SubmenuRead, status_code=201)
+def create_submenu(menu_id: uuid.UUID, create_data: s.SubmenuCreate, db: Session = Depends(get_db)):
     """
     create submenu
     """
@@ -43,8 +43,8 @@ def create_submenu(menu_id: uuid.UUID, create_data: SubmenuCreate, db: Session =
     return new_submenu
 
 
-@submenu_route.patch("/submenus/{submenu_id}", response_model=SubmenuRead, status_code=200)
-def update_submenu_by_id(submenu_id: uuid.UUID, update_data: SubmenuUpdate, db: Session = Depends(get_db)):
+@submenu_route.patch("/submenus/{submenu_id}", response_model=s.SubmenuRead, status_code=200)
+def update_submenu_by_id(submenu_id: uuid.UUID, update_data: s.SubmenuUpdate, db: Session = Depends(get_db)):
     """
     update submenu by id
     """

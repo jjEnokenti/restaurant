@@ -4,7 +4,12 @@ from sqlalchemy import Column, String, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
-from menu.core import Base
+from menu_app.core.setup_db import Base
+
+
+__all__ = [
+    "Dish"
+]
 
 
 class Dish(Base):

@@ -13,5 +13,5 @@ class Config:
     HOST = os.environ.get("HOST")
     DB_NAME = os.environ.get("DB_NAME")
 
-    SQLALCHEMY_DATABASE_URL = f"postgresql+psycopg2://" \
-                              f"{USER}:{PASSWORD}@{HOST}:5432/{DB_NAME}"
+    SQLALCHEMY_DATABASE_URL = f"postgresql://" \
+                              f"{USER}:{PASSWORD}@{HOST}/{DB_NAME}"

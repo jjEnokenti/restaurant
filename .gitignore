@@ -1,6 +1,7 @@
 .idea/
 **__pycache__/
-alembic.ini
-alembic/
 venv/
+.git/
+
 .env
+alembic/versions/*.py

@@ -3,15 +3,15 @@ import uuid
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 
-import menu.services.menu as menu_service
-from menu.dependences import get_db
-from menu.schemas import MenuCreate, MenuRead, MenuUpdate
+import menu_app.services.menu as menu_service
+from menu_app.dependences import get_db
+from menu_app.schemas import menu as m
 
 
 menu_route = APIRouter()
 
 
-@menu_route.get("/menus", response_model=list[MenuRead], status_code=200)
+@menu_route.get("/menus", response_model=list[m.MenuRead], status_code=200)
 def get_all_menu(db: Session = Depends(get_db)):
     """
     get all menus
@@ -24,7 +24,7 @@ def get_all_menu(db: Session = Depends(get_db)):
     return menus
 
 
-@menu_route.get("/menus/{menu_id}", response_model=MenuRead, status_code=200)
+@menu_route.get("/menus/{menu_id}", response_model=m.MenuRead, status_code=200)
 def get_menu_by_id(menu_id: uuid.UUID, db: Session = Depends(get_db)):
     """
     get single menu by id
@@ -34,8 +34,8 @@ def get_menu_by_id(menu_id: uuid.UUID, db: Session = Depends(get_db)):
     return menu
 
 
-@menu_route.post("/menus", response_model=MenuRead, status_code=201)
-def create_menu(create_data: MenuCreate, db: Session = Depends(get_db)):
+@menu_route.post("/menus", response_model=m.MenuRead, status_code=201)
+def create_menu(create_data: m.MenuCreate, db: Session = Depends(get_db)):
     """
     create new menu
     """
@@ -44,8 +44,8 @@ def create_menu(create_data: MenuCreate, db: Session = Depends(get_db)):
     return new_menu
 
 
-@menu_route.patch("/menus/{menu_id}", response_model=MenuRead, status_code=200)
-def update_menu_by_id(menu_id: uuid.UUID, update_data: MenuUpdate, db: Session = Depends(get_db)):
+@menu_route.patch("/menus/{menu_id}", response_model=m.MenuRead, status_code=200)
+def update_menu_by_id(menu_id: uuid.UUID, update_data: m.MenuUpdate, db: Session = Depends(get_db)):
     """
     update menu by id
     """

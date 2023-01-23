@@ -1,6 +1,6 @@
 from fastapi import FastAPI, APIRouter
 
-from .routes import menu, submenu, dish
+from menu_app.routes import menu, submenu, dish
 
 
 def create_app():

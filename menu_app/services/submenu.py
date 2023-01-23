@@ -2,7 +2,16 @@ from fastapi import HTTPException, status
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
-from menu.models import Submenu, Dish
+from menu_app.models import submenu as s, dish as d
+
+
+__all__ = [
+    "get_all",
+    "get_single_by_id",
+    "create",
+    "update",
+    "delete"
+]
 
 
 def get_all(db: Session, menu_id):
@@ -11,14 +20,14 @@ def get_all(db: Session, menu_id):
     """
     try:
         submenus_query = db.query(
-            Submenu.id,
-            Submenu.title,
-            Submenu.description,
-            func.count(Dish.id).label("dishes_count")
+            s.Submenu.id,
+            s.Submenu.title,
+            s.Submenu.description,
+            func.count(d.Dish.id).label("dishes_count")
         ). \
-            group_by(Submenu.id). \
-            outerjoin(Dish, Dish.submenu_id == Submenu.id). \
-            filter(Submenu.menu_id == menu_id)
+            group_by(s.Submenu.id). \
+            outerjoin(d.Dish, d.Dish.submenu_id == s.Submenu.id). \
+            filter(s.Submenu.menu_id == menu_id)
 
         submenus = submenus_query.all()
     except Exception as e:
@@ -35,14 +44,14 @@ def get_single_by_id(db: Session, submenu_id):
     try:
 
         submenu_query = db.query(
-            Submenu.id,
-            Submenu.title,
-            Submenu.description,
-            func.count(Dish.id).label("dishes_count")
+            s.Submenu.id,
+            s.Submenu.title,
+            s.Submenu.description,
+            func.count(d.Dish.id).label("dishes_count")
         ). \
-            group_by(Submenu.id). \
-            outerjoin(Dish, Dish.submenu_id == Submenu.id). \
-            filter(Submenu.id == submenu_id)
+            group_by(s.Submenu.id). \
+            outerjoin(d.Dish, d.Dish.submenu_id == s.Submenu.id). \
+            filter(s.Submenu.id == submenu_id)
 
         submenu = submenu_query.first()
     except Exception as e:
@@ -60,7 +69,7 @@ def create(db: Session, menu_id, create_data):
     insert new submenu into db
     """
     try:
-        new_submenu = Submenu(**create_data.dict(), menu_id=menu_id)
+        new_submenu = s.Submenu(**create_data.dict(), menu_id=menu_id)
         db.add(new_submenu)
         db.commit()
         db.refresh(new_submenu)
@@ -77,7 +86,7 @@ def update(db: Session, submenu_id, update_data):
     update single submenu by id into db
     """
     try:
-        submenu_query = db.query(Submenu).filter(Submenu.id == submenu_id)
+        submenu_query = db.query(s.Submenu).filter(s.Submenu.id == submenu_id)
         updated_submenu = submenu_query.first()
 
         if not updated_submenu:
@@ -99,7 +108,7 @@ def delete(db: Session, submenu_id):
     delete single submenu by id from db
     """
     try:
-        submenu = db.query(Submenu).get(submenu_id)
+        submenu = db.query(s.Submenu).get(submenu_id)
 
         if not submenu:
             raise ValueError(f"submenu with: id {submenu_id} not found")

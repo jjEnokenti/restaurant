@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  menu_app:
+    container_name: menu_app
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    env_file:
+      - .env.example
+    entrypoint:
+      sh -c "
+      alembic revision --autogenerate -m 'first migrate into docker' &&
+      alembic upgrade head &&
+      uvicorn run:app --host 0.0.0.0 --reload
+      "
+#    command: bash -c "uvicorn run:app --host 0.0.0.0 --reload"
+    networks:
+      - menu_app_network
+    ports:
+      - "8080:8000"
+    depends_on:
+      postgresql:
+        condition: service_healthy
+
+  postgresql:
+    container_name: postgresql_db
+    restart: always
+    image: postgres:15.1-alpine
+    env_file:
+      - .env.example
+    expose:
+      - 5432
+    ports:
+      - "54321:5432"
+    networks:
+      - menu_app_network
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  menu_app_network:
