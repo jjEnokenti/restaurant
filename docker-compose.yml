@@ -7,7 +7,7 @@ services:
       context: ./
       dockerfile: Dockerfile
     env_file:
-      - .env.docker
+      - docker.env
     entrypoint:
       sh -c "
       alembic revision --autogenerate -m 'first migrate into docker' &&
@@ -28,7 +28,7 @@ services:
     restart: always
     image: postgres:15.1-alpine
     env_file:
-      - .env.docker
+      - docker.env
     expose:
       - 5432
     ports:
