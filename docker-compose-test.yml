@@ -9,7 +9,7 @@ services:
     networks:
       - test_menu_app
     env_file:
-      - test.env
+      - .env.tests
     entrypoint:
       sh -c "
       alembic revision --autogenerate -m 'first migrate into docker' &&
@@ -27,7 +27,7 @@ services:
     networks:
       - test_menu_app
     env_file:
-      - test.env
+      - .env.tests
     expose:
       - 5432
     ports:
