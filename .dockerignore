@@ -4,5 +4,5 @@ venv/
 .git/
 .env
 Dockerfile
-#.pytest_cache
+**.pytest_cache/
 alembic/versions/*.py

@@ -15,11 +15,5 @@ class BaseConfig:
                               f"{USER}:{PASSWORD}@{HOST}/{DB_NAME}"
 
 
-class TestConfig:
-    USER = os.environ.get("TEST_USER")
-    PASSWORD = os.environ.get("TEST_PASSWORD")
-    HOST = os.environ.get("TEST_HOST")
-    DB_NAME = os.environ.get("TEST_DB_NAME")
-
-    TEST_SQLALCHEMY_DATABASE_URL = f"postgresql://" \
-                                   f"{USER}:{PASSWORD}@{HOST}/{DB_NAME}"
+class TestConfig(BaseConfig):
+    DB_NAME = "test_db"
