@@ -12,7 +12,8 @@ services:
       - .env.tests
     entrypoint:
       sh -c "
-      alembic revision --autogenerate -m 'first migrate into docker' &&
+      cd alembic && mkdir version && cd .. &&
+      alembic revision --autogenerate -m 'first migrate into docker for testing' &&
       alembic upgrade head &&
       pytest -vv
       "

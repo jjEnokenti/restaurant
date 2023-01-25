@@ -21,4 +21,4 @@
 
 <h3> Удаление всех образов </h3>
 
-    $ docker rmi $(docker -a -q)
+    $ docker rmi $(docker images -a -q)

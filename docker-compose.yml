@@ -10,15 +10,15 @@ services:
       - .env.docker
     entrypoint:
       sh -c "
+      cd alembic && mkdir version && cd .. &&
       alembic revision --autogenerate -m 'first migrate into docker' &&
       alembic upgrade head &&
       uvicorn run:app --host 0.0.0.0 --reload
       "
-#    command: bash -c "uvicorn run:app --host 0.0.0.0 --reload"
     networks:
       - menu_app_network
     ports:
-      - "8080:8000"
+      - "8000:8000"
     depends_on:
       postgresql:
         condition: service_healthy
