@@ -30,9 +30,9 @@ services:
     env_file:
       - .env.docker
     expose:
-      - 5432
+      - 5433
     ports:
-      - "54321:5432"
+      - "5433:5432"
     networks:
       - menu_app_network
     healthcheck:

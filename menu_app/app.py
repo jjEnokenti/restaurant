@@ -14,14 +14,17 @@ def create_app():
 
     main_route.include_router(
         menu.menu_route,
+        tags=['menus']
     )
     main_route.include_router(
         submenu.submenu_route,
-        prefix="/menus/{menu_id}"
+        prefix="/menus/{menu_id}",
+        tags=['submenus']
     )
     main_route.include_router(
         dish.dish_route,
-        prefix="/menus/{menu_id}/submenus/{submenu_id}"
+        prefix="/menus/{menu_id}/submenus/{submenu_id}",
+        tags=['dishes']
     )
 
     app.include_router(main_route)

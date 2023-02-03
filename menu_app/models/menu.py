@@ -19,7 +19,11 @@ class Menu(Base):
     title = Column(String(255), unique=True, nullable=False)
     description = Column(String(255))
 
-    submenu = relationship("Submenu", back_populates="menu", cascade="all, delete, delete-orphan")
+    submenu = relationship(
+        "Submenu",
+        back_populates="menu",
+        cascade="all, delete, delete-orphan"
+    )
 
     def __repr__(self):
         return f"{self.id}, {self.title}, {self.description}"

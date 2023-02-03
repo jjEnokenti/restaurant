@@ -6,7 +6,6 @@ from sqlalchemy.orm import relationship
 
 from menu_app.core.setup_db import Base
 
-
 __all__ = [
     "Submenu"
 ]
@@ -19,7 +18,14 @@ class Submenu(Base):
     title = Column(String(255), unique=True, nullable=False)
     description = Column(String(255))
 
-    menu_id = Column(UUID(as_uuid=True), ForeignKey("menu_table.id", ondelete="CASCADE"))
+    menu_id = Column(
+        UUID(as_uuid=True),
+        ForeignKey("menu_table.id", ondelete="CASCADE")
+    )
 
-    dish = relationship("Dish", back_populates="submenu", cascade="all, delete, delete-orphan")
+    dish = relationship(
+        "Dish",
+        back_populates="submenu",
+        cascade="all, delete, delete-orphan"
+    )
     menu = relationship("Menu", back_populates="submenu")

@@ -20,6 +20,9 @@ class Dish(Base):
     description = Column(String(255))
     price = Column(String)
 
-    submenu_id = Column(UUID(as_uuid=True), ForeignKey("submenu_table.id", ondelete="CASCADE"))
+    submenu_id = Column(
+        UUID(as_uuid=True),
+        ForeignKey("submenu_table.id", ondelete="CASCADE")
+    )
 
     submenu = relationship("Submenu", back_populates="dish")

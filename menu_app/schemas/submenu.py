@@ -1,6 +1,6 @@
 import uuid
 
-from pydantic import BaseModel, UUID4
+from pydantic import BaseModel
 
 
 class SubmenuBase(BaseModel):
@@ -33,5 +33,5 @@ class SubmenuRead(SubmenuBase):
     """
     read schema
     """
-    id: UUID4
+    id: uuid.UUID
     dishes_count: int = 0
