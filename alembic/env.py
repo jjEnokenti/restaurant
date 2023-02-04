@@ -7,9 +7,9 @@ from alembic import context
 
 from menu_app.configs.config import BaseConfig
 from menu_app.core.setup_db import Base
-from menu_app.models.menu import Menu  # noqa
-from menu_app.models.submenu import Submenu  # noqa
-from menu_app.models.dish import Dish  # noqa
+from menu_app.dao.models import Menu  # noqa
+from menu_app.dao.models import Submenu  # noqa
+from menu_app.dao.models import Dish  # noqa
 
 
 # this is the Alembic Config object, which provides

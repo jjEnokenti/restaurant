@@ -5,8 +5,7 @@ from sqlalchemy.orm import Session
 
 import menu_app.services.dish as dish_service
 from menu_app.dependences import get_db
-from menu_app.schemas import dish as d
-
+from menu_app.dao.schemas import dish as d
 
 dish_route = APIRouter()
 

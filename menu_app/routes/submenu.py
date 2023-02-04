@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 
 import menu_app.services.submenu as submenu_service
 from menu_app.dependences import get_db
-from menu_app.schemas import submenu as s
+from menu_app.dao.schemas import submenu as s
 
 submenu_route = APIRouter()
 
