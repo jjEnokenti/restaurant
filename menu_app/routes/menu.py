@@ -1,10 +1,8 @@
 import uuid
 
 from fastapi import APIRouter, Depends, status
-from sqlalchemy.orm import Session
 
-import menu_app.services.menu as menu_service
-from menu_app.dependences import get_db
+from menu_app.services.menu import get_menu_service, MenuService
 from menu_app.schemas import menu as m
 
 
@@ -17,12 +15,12 @@ menu_route = APIRouter()
     status_code=200
 )
 def get_all_menu(
-        db: Session = Depends(get_db)
+        menu_service: MenuService = Depends(get_menu_service)
 ) -> list[m.MenuRead]:
     """
-    get all menus
+    list with menus or empty list
     """
-    menus = menu_service.get_all(db)
+    menus = menu_service.get_all()
 
     if not menus:
         return []
@@ -37,13 +35,13 @@ def get_all_menu(
 )
 def get_menu_by_id(
         menu_id: uuid.UUID,
-        db: Session = Depends(get_db)
+        menu_service: MenuService = Depends(get_menu_service)
 ) -> m.MenuRead:
     """
     get single menu by id
     """
 
-    return menu_service.get_single_by_id(db, menu_id)
+    return menu_service.get_single_by_id(menu_id)
 
 
 @menu_route.post(
@@ -53,13 +51,13 @@ def get_menu_by_id(
 )
 def create_menu(
         create_data: m.MenuCreate,
-        db: Session = Depends(get_db)
+        menu_service: MenuService = Depends(get_menu_service)
 ) -> m.MenuRead:
     """
     create new menu
     """
 
-    return menu_service.create(db, create_data)
+    return menu_service.create(create_data)
 
 
 @menu_route.patch(
@@ -70,13 +68,13 @@ def create_menu(
 def update_menu_by_id(
         menu_id: uuid.UUID,
         update_data: m.MenuUpdate,
-        db: Session = Depends(get_db)
+        menu_service: MenuService = Depends(get_menu_service)
 ) -> m.MenuRead:
     """
     update menu by id
     """
 
-    return menu_service.update(db, menu_id, update_data)
+    return menu_service.update(menu_id, update_data)
 
 
 @menu_route.delete(
@@ -85,11 +83,11 @@ def update_menu_by_id(
 )
 def delete_menu_by_id(
         menu_id: uuid.UUID,
-        db: Session = Depends(get_db)
+        menu_service: MenuService = Depends(get_menu_service)
 ) -> str:
     """
     delete menu by id
     """
-    menu_service.delete(db, menu_id)
+    menu_service.delete(menu_id)
 
     return f"menu {menu_id} was deleted"
