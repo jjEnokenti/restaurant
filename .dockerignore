@@ -3,6 +3,7 @@ venv/
 .idea/
 .git/
 .env
-Dockerfile
 **.pytest_cache/
-alembic/versions/*.py
+
+Dockerfile
+alembic/versions/
