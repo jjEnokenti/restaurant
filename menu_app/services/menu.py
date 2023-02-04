@@ -17,16 +17,16 @@ class MenuService:
     Menu service
     """
 
-    def __init__(self, session: MenuDao):
-        self.session = session
+    def __init__(self, dao: MenuDao):
+        self.dao = dao
 
     def get_all(self) -> list[MenuRead]:
         """
         get all menus from db
         """
         try:
-            with self.session.session.begin():
-                menus = self.session.get_all()
+            with self.dao.session.begin():
+                menus = self.dao.get_all()
 
         except Exception as e:
             raise HTTPException(status_code=status.HTTP_200_OK,
@@ -39,8 +39,8 @@ class MenuService:
         get single menu by id from db
         """
         try:
-            with self.session.session.begin():
-                menu = self.session.get_single_by_id(menu_id=menu_id)
+            with self.dao.session.begin():
+                menu = self.dao.get_single_by_id(menu_id=menu_id)
 
         except Exception as e:
             raise HTTPException(status_code=status.HTTP_200_OK,
@@ -57,8 +57,8 @@ class MenuService:
         insert new menu into db
         """
         try:
-            with self.session.session.begin():
-                new_menu = self.session.create(data=create_data)
+            with self.dao.session.begin():
+                new_menu = self.dao.create(data=create_data)
 
         except Exception as e:
             raise HTTPException(status_code=status.HTTP_200_OK,
@@ -75,8 +75,8 @@ class MenuService:
         update single menu by id into db
         """
         try:
-            with self.session.session.begin():
-                updated_menu = self.session.update(menu_id=menu_id, data=update_data)
+            with self.dao.session.begin():
+                updated_menu = self.dao.update(menu_id=menu_id, data=update_data)
 
                 if not updated_menu:
                     raise ItemNotFound(f'menu with: id {menu_id} not found')
@@ -91,8 +91,8 @@ class MenuService:
         delete single menu by id from db
         """
         try:
-            with self.session.session.begin():
-                is_deleted = self.session.delete(menu_id=menu_id)
+            with self.dao.session.begin():
+                is_deleted = self.dao.delete(menu_id=menu_id)
                 if not is_deleted:
                     raise ItemNotFound(f'menu with: id {menu_id} not found')
         except Exception as e:
@@ -103,4 +103,4 @@ class MenuService:
 def get_menu_service(
         dao: MenuDao = Depends(get_menu_dao)
 ) -> MenuService:
-    return MenuService(session=dao)
+    return MenuService(dao=dao)
