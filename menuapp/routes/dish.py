@@ -3,9 +3,9 @@ import uuid
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 
-import menu_app.services.dish as dish_service
-from menu_app.dependences import get_db
-from menu_app.dao.schemas import dish as d
+import menuapp.services.dish as dish_service
+from menuapp.dependences import get_db
+from menuapp.dao.schemas import dish as d
 
 dish_route = APIRouter()
 

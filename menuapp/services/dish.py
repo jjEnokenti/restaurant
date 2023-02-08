@@ -1,7 +1,7 @@
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 
-from menu_app.dao.models import dish as d
+from menuapp.dao.models import dish as d
 
 __all__ = [
     "get_all",

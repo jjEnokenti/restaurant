@@ -2,11 +2,12 @@ import uuid
 
 from fastapi import Depends
 from sqlalchemy import select, func, distinct
+from sqlalchemy.engine import row
 from sqlalchemy.orm import Session
 
-from menu_app.dao.models import menu as m, submenu as s, dish as d
-from menu_app.dao.schemas.menu import MenuCreate, MenuUpdate
-from menu_app.dependences import get_db
+from menuapp.dao.models import menu as m, submenu as s, dish as d
+from menuapp.dao.schemas.menu import MenuCreate, MenuUpdate
+from menuapp.dependences import get_db
 
 __all__ = (
     'get_menu_dao',
@@ -22,15 +23,22 @@ class MenuDao:
     def __init__(self, session: Session):
         self.session = session
 
-    def __get(self, menu_id: uuid.UUID):
+    def __get(self, menu_id: uuid.UUID) -> menu_model:
+        """ get menu scalar data """
+
         statement = select(
             self.menu_model
         ).where(self.menu_model.id == menu_id)
 
-        menu = self.session.execute(statement).scalar_one_or_none()
+        menu = self.session.execute(
+            statement=statement
+        ).scalar_one_or_none()
+
         return menu
 
-    def get_all(self):
+    def get_all(self) -> list[row]:
+        """ get all menus """
+
         statement = select(
             self.menu_model.id,
             self.menu_model.title,
@@ -47,14 +55,14 @@ class MenuDao:
             self.menu_model.id
         )
 
-        menus = self.session.execute(statement).all()
+        menus = self.session.execute(
+            statement=statement
+        ).all()
 
         return menus
 
-    def get_single_by_id(self, menu_id: uuid.UUID):
-        """
-        get single menu by id from db
-        """
+    def get_single_by_id(self, menu_id: uuid.UUID) -> row:
+        """ get single menu by id """
 
         statement = select(
             self.menu_model.id,
@@ -70,16 +78,17 @@ class MenuDao:
             self.submenu_model.id == self.dish_model.submenu_id
         ).group_by(
             self.menu_model.id
-        ).filter(self.menu_model.id == menu_id)
+        ).where(self.menu_model.id == menu_id)
 
-        menu = self.session.execute(statement).one_or_none()
+        menu = self.session.execute(
+            statement=statement
+        ).one_or_none()
 
         return menu
 
     def create(self, data: MenuCreate) -> MenuCreate:
-        """
-        insert new menu into db
-        """
+        """ insert new menu """
+
         new_menu = self.menu_model(**data.dict())
         self.session.add(new_menu)
 
@@ -90,9 +99,8 @@ class MenuDao:
             menu_id: uuid.UUID,
             data: MenuUpdate
     ) -> MenuUpdate | None:
-        """
-        update single menu by id into db
-        """
+        """ update single menu by id """
+
         updated_menu = self.__get(menu_id=menu_id)
         if updated_menu:
             for key, value in data.dict(exclude_unset=True).items():
@@ -102,18 +110,17 @@ class MenuDao:
         return updated_menu
 
     def delete(self, menu_id: uuid.UUID) -> bool:
-        """
-        delete single menu by id from db
-        """
+        """ delete single menu by id """
         menu = self.__get(menu_id=menu_id)
 
         if menu:
             self.session.delete(menu)
             return True
+
         return False
 
 
 def get_menu_dao(
-        session: Session = Depends(get_db),
+        session: Session = Depends(get_db)
 ) -> MenuDao:
     return MenuDao(session=session)

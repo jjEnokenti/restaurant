@@ -3,9 +3,9 @@ from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from menu_app.configs.config import TestConfig
-from menu_app.core.setup_db import Base
-from menu_app.dependences import get_db
+from menuapp.configs.config import TestConfig
+from menuapp.dao.models import Base
+from menuapp.dependences import get_db
 from run import app
 
 engine = create_engine(TestConfig.SQLALCHEMY_DATABASE_URL)

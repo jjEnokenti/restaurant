@@ -1,8 +1,8 @@
 import uvicorn
 from fastapi import Request, Response
 
-from menu_app.core.setup_db import SessionLocal
-from menu_app.app import create_app
+from menuapp.core.setup_db import SessionLocal
+from menuapp.app import create_app
 
 
 app = create_app()

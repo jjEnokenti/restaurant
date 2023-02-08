@@ -4,11 +4,11 @@ from sqlalchemy import Column, String, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
-from menu_app.core.setup_db import Base
+from menuapp.dao.models import Base
 
-__all__ = [
-    "Submenu"
-]
+__all__ = (
+    "Submenu",
+)
 
 
 class Submenu(Base):

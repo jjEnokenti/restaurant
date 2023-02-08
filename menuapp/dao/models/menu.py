@@ -4,12 +4,12 @@ from sqlalchemy import Column, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 
-from menu_app.core.setup_db import Base
+from menuapp.dao.models import Base
 
 
-__all__ = [
-    "Menu"
-]
+__all__ = (
+    "Menu",
+)
 
 
 class Menu(Base):

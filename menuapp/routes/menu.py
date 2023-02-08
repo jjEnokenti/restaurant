@@ -2,8 +2,8 @@ import uuid
 
 from fastapi import APIRouter, Depends, status
 
-from menu_app.dao.schemas import menu as m
-from menu_app.services.menu import get_menu_service, MenuService
+from menuapp.dao.schemas import menu as m
+from menuapp.services.menu import get_menu_service, MenuService
 
 menu_route = APIRouter()
 
@@ -50,8 +50,10 @@ def get_menu_by_id(
 def create_menu(
         create_data: m.MenuCreate,
         menu_service: MenuService = Depends(get_menu_service)
-) -> m.MenuRead:
-    return menu_service.create(create_data)
+) -> m.MenuCreate:
+    return menu_service.create(
+        create_data=create_data
+    )
 
 
 @menu_route.patch(
@@ -65,7 +67,7 @@ def update_menu_by_id(
         menu_id: uuid.UUID,
         update_data: m.MenuUpdate,
         menu_service: MenuService = Depends(get_menu_service)
-) -> m.MenuRead:
+) -> m.MenuUpdate:
     return menu_service.update(menu_id, update_data)
 
 

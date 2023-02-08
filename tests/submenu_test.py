@@ -140,12 +140,12 @@ class TestSubmenu:
         menu_id = test_client.get(
             '/api/v1/menus',
             follow_redirects=True
-        ).json()[0].get("id")
+        ).json()[0].get('id')
         response = test_client.get(
-            f'''/api/v1/menus/
-            {menu_id}/submenus/
-            5372d4ba-1e98-4b37-b1fe-29856c0e6220''',
-            follow_redirects=True)
+            f'/api/v1/menus/{menu_id}/submenus'
+            f'/5372d4ba-1e98-4b37-b1fe-29856c0e6220',
+            follow_redirects=True
+        )
 
         assert response.json().get("detail") == "submenu not found"
         assert response.status_code == 404
