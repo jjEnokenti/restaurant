@@ -2,8 +2,8 @@ import uuid
 
 from fastapi import HTTPException, status, Depends
 
-from menuapp.dao.submenu import SubmenuDao, get_submenu_dao
 from menuapp.dao.schemas.submenu import SubmenuRead, SubmenuCreate, SubmenuUpdate
+from menuapp.dao.submenu import SubmenuDao, get_submenu_dao
 from menuapp.exceptions.not_existent import ItemNotFound
 
 __all__ = (
