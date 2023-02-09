@@ -1,101 +1,117 @@
-from fastapi import HTTPException, status
-from sqlalchemy.orm import Session
+import uuid
 
-from menuapp.dao.models import dish as d
+from fastapi import HTTPException, status, Depends
 
-__all__ = [
-    "get_all",
-    "get_single_by_id",
-    "create",
-    "update",
-    "delete"
-]
+from menuapp.dao.schemas.dish import DishRead, DishCreate, DishUpdate
+from menuapp.dao.dish import DishDao, get_dish_dao
+from menuapp.exceptions.not_existent import ItemNotFound
 
-
-def get_all(db: Session, submenu_id):
-    """
-    get all dishes from db
-    """
-    try:
-        dishes = db.query(d.Dish).filter(d.Dish.submenu_id == submenu_id).all()
-    except Exception as e:
-        raise HTTPException(status_code=status.HTTP_200_OK,
-                            detail=f"error message: {e}")
-    else:
-        return dishes
+__all__ = (
+    'DishService',
+    'get_dish_service',
+)
 
 
-def get_single_by_id(db: Session, dish_id):
-    """
-    get single dish by id from db
-    """
-    try:
+class DishService:
 
-        dish = db.query(d.Dish).filter(d.Dish.id == dish_id).first()
+    def __init__(self, dao: DishDao):
+        self.dao = dao
 
-    except Exception as e:
-        raise HTTPException(status_code=status.HTTP_200_OK,
-                            detail=f"error message: {e}")
-    else:
-        if not dish:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                                detail="dish not found")
+    def get_all(self, submenu_id: uuid.UUID) -> list[DishRead]:
+        """ get all dishes """
 
-        return dish
+        try:
+            with self.dao.session.begin():
+                dishes = self.dao.get_all(
+                    submenu_id=submenu_id
+                )
+
+        except Exception as e:
+            raise HTTPException(status_code=status.HTTP_200_OK,
+                                detail=f"error message: {e}")
+        else:
+            return dishes
+
+    def get_single_by_id(self, dish_id: uuid.UUID) -> DishRead:
+        """ get single dish by id """
+
+        try:
+            with self.dao.session.begin():
+                dish = self.dao.get_single_by_id(
+                    dish_id=dish_id
+                )
+
+        except Exception as e:
+            raise HTTPException(status_code=status.HTTP_200_OK,
+                                detail=f"error message: {e}")
+        else:
+            if not dish:
+                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                                    detail="dish not found")
+
+            return dish
+
+    def create(
+            self,
+            submenu_id: uuid.UUID,
+            create_data: DishCreate
+    ) -> DishCreate:
+        """ insert new dish """
+
+        try:
+            with self.dao.session.begin():
+                new_dish = self.dao.create(
+                    submenu_id=submenu_id,
+                    data=create_data
+                )
+
+        except Exception as e:
+            raise HTTPException(status_code=status.HTTP_200_OK,
+                                detail=f"error message: {e}")
+        else:
+            return new_dish
+
+    def update(
+            self,
+            dish_id: uuid.UUID,
+            update_data: DishUpdate
+    ) -> DishUpdate:
+        """ update single dish by id """
+
+        try:
+            with self.dao.session.begin():
+                updated_dish = self.dao.update(
+                    dish_id=dish_id,
+                    data=update_data
+                )
+
+            if updated_dish:
+                raise ItemNotFound(f"dish with: id {dish_id} not found")
+
+        except Exception as e:
+            raise HTTPException(status_code=status.HTTP_200_OK,
+                                detail=f"error message: {e}")
+        else:
+            return updated_dish
+
+    def delete(self, dish_id: uuid.UUID):
+        """ delete single dish by id """
+
+        try:
+            with self.dao.session.begin():
+                is_deleted = self.dao.delete(
+                    dish_id=dish_id
+                )
+
+            if not is_deleted:
+                raise ItemNotFound(f"dish with: id {dish_id} not found")
+
+        except Exception as e:
+            raise HTTPException(status_code=status.HTTP_200_OK,
+                                detail=f"error message: {e}")
 
 
-def create(db: Session, submenu_id, create_data):
-    """
-    insert new dish into db
-    """
-    try:
-        new_dish = d.Dish(**create_data.dict(), submenu_id=submenu_id)
-        db.add(new_dish)
-        db.commit()
-        db.refresh(new_dish)
-    except Exception as e:
-        db.rollback()
-        raise HTTPException(status_code=status.HTTP_200_OK,
-                            detail=f"error message: {e}")
-    else:
-        return new_dish
-
-
-def update(db: Session, dish_id, update_data):
-    """
-    update single dish by id into db
-    """
-    try:
-        dish_query = db.query(d.Dish).filter(d.Dish.id == dish_id)
-        updated_dish = dish_query.first()
-
-        if not updated_dish:
-            raise ValueError(f"dish with: id {dish_id} not found")
-
-        dish_query.update(update_data.dict(exclude_unset=True))
-        db.commit()
-        db.refresh(updated_dish)
-    except Exception as e:
-        db.rollback()
-        raise HTTPException(status_code=status.HTTP_200_OK,
-                            detail=f"error message: {e}")
-    else:
-        return updated_dish
-
-
-def delete(db: Session, dish_id):
-    """
-    delete single dish by id from db
-    """
-    try:
-        dish = db.query(d.Dish).get(dish_id)
-
-        if not dish:
-            raise ValueError(f"dish with: id {dish_id} not found")
-
-        db.delete(dish)
-        db.commit()
-    except Exception as e:
-        db.rollback()
-        raise HTTPException(status_code=status.HTTP_200_OK,
-                            detail=f"error message: {e}")
+def get_dish_service(
+        dao: DishDao = Depends(get_dish_dao)
+) -> DishService:
+    return DishService(dao=dao)

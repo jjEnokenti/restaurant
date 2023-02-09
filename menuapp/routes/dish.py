@@ -3,7 +3,7 @@ import uuid
 from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 
-import menuapp.services.dish as dish_service
+from menuapp.services.dish import DishService, get_dish_service
 from menuapp.dependences import get_db
 from menuapp.dao.schemas import dish as d
 
@@ -13,16 +13,16 @@ dish_route = APIRouter()
 @dish_route.get(
     "/dishes",
     response_model=list[d.DishRead],
+    summary='get dishes',
+    description='returns response all dishes or empty list',
     status_code=status.HTTP_200_OK
 )
 def get_all_dishes(
         submenu_id: uuid.UUID,
-        db: Session = Depends(get_db)
-):
-    """
-    get all dishes
-    """
-    dishes = dish_service.get_all(db, submenu_id)
+        dish_service: DishService = Depends(get_dish_service)
+) -> list[d.DishRead]:
+    dishes = dish_service.get_all(submenu_id=submenu_id)
+
     if not dishes:
         return []
 
@@ -32,61 +32,63 @@ def get_all_dishes(
 @dish_route.get(
     "/dishes/{dish_id}",
     response_model=d.DishRead,
+    summary='get single dish by id',
+    description='returns detailed response a dish by id',
     status_code=status.HTTP_200_OK
 )
-def get_dish_by_id(dish_id: uuid.UUID, db: Session = Depends(get_db)):
-    """
-    get single dish by id
-    """
-
-    return dish_service.get_single_by_id(db, dish_id)
+def get_dish_by_id(
+        dish_id: uuid.UUID,
+        dish_service: DishService = Depends(get_dish_service)
+) -> d.DishRead:
+    return dish_service.get_single_by_id(dish_id=dish_id)
 
 
 @dish_route.post(
     "/dishes",
     response_model=d.DishRead,
+    summary='create new dish',
+    description='creates a dish, return detailed response with a new dish',
     status_code=status.HTTP_201_CREATED
 )
 def create_dish(
         submenu_id: uuid.UUID,
         create_data: d.DishCreate,
-        db: Session = Depends(get_db)
-):
-    """
-    create new dish
-    """
-
-    return dish_service.create(db, submenu_id, create_data)
+        dish_service: DishService = Depends(get_dish_service)
+) -> d.DishCreate:
+    return dish_service.create(
+        submenu_id=submenu_id,
+        create_data=create_data
+    )
 
 
 @dish_route.patch(
     "/dishes/{dish_id}",
     response_model=d.DishRead,
+    summary='update dish by id',
+    description='updates dish by id, returns detailed response with updated dish',
     status_code=status.HTTP_200_OK
 )
 def update_dish_by_id(
         dish_id: uuid.UUID,
         update_data: d.DishUpdate,
-        db: Session = Depends(get_db)
-):
-    """
-    update dish by id
-    """
-
-    return dish_service.update(db, dish_id, update_data)
+        dish_service: DishService = Depends(get_dish_service)
+) -> d.DishUpdate:
+    return dish_service.update(
+        dish_id=dish_id,
+        update_data=update_data
+    )
 
 
 @dish_route.delete(
     "/dishes/{dish_id}",
+    summary='delete dish by id',
+    description='delete dish by id, return status response information',
     status_code=status.HTTP_200_OK
 )
 def delete_dish_by_id(
         dish_id: uuid.UUID,
-        db: Session = Depends(get_db)
-):
-    """
-    delete dish by id
-    """
-    dish_service.delete(db, dish_id)
+        dish_service: DishService = Depends(get_dish_service)
+) -> str:
+    dish_service.delete(dish_id=dish_id)
 
     return f"dish {dish_id} was deleted"

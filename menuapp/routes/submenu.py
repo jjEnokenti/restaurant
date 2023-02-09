@@ -45,7 +45,7 @@ def get_single_submenu_by_id(
     '/submenus',
     response_model=s.SubmenuRead,
     summary='create new submenu',
-    description='creates a menu, return detailed response with a new submenu',
+    description='creates a submenu, return detailed response with a new submenu',
     status_code=status.HTTP_201_CREATED
 )
 def create_submenu(
@@ -63,7 +63,7 @@ def create_submenu(
     '/submenus/{submenu_id}',
     response_model=s.SubmenuRead,
     summary='update submenu by id',
-    description='updates menu by id, returns detailed response with updated submenu',
+    description='updates submenu by id, returns detailed response with updated submenu',
     status_code=status.HTTP_200_OK
 )
 def update_submenu_by_id(
