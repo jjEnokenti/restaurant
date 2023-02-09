@@ -30,11 +30,9 @@ class MenuDao:
             self.menu_model
         ).where(self.menu_model.id == menu_id)
 
-        menu = self.session.execute(
+        return self.session.execute(
             statement=statement
         ).scalar_one_or_none()
-
-        return menu
 
     def get_all(self) -> list[row]:
         """ get all menus """
@@ -43,7 +41,9 @@ class MenuDao:
             self.menu_model.id,
             self.menu_model.title,
             self.menu_model.description,
-            func.count(distinct(self.submenu_model.id)).label('submenus_count'),
+            func.count(distinct(
+                self.submenu_model.id)
+            ).label('submenus_count'),
             func.count(self.dish_model.id).label('dishes_count')
         ).outerjoin(
             self.submenu_model,
@@ -55,11 +55,9 @@ class MenuDao:
             self.menu_model.id
         )
 
-        menus = self.session.execute(
+        return self.session.execute(
             statement=statement
         ).all()
-
-        return menus
 
     def get_single_by_id(self, menu_id: uuid.UUID) -> row:
         """ get single menu by id """
@@ -68,7 +66,9 @@ class MenuDao:
             self.menu_model.id,
             self.menu_model.title,
             self.menu_model.description,
-            func.count(distinct(self.submenu_model.id)).label('submenus_count'),
+            func.count(distinct(
+                self.submenu_model.id)
+            ).label('submenus_count'),
             func.count(self.dish_model.id).label('dishes_count')
         ).outerjoin(
             self.submenu_model,
@@ -80,11 +80,9 @@ class MenuDao:
             self.menu_model.id
         ).where(self.menu_model.id == menu_id)
 
-        menu = self.session.execute(
+        return self.session.execute(
             statement=statement
         ).one_or_none()
-
-        return menu
 
     def create(self, data: MenuCreate) -> MenuCreate:
         """ insert new menu """

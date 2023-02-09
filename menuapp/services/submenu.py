@@ -2,7 +2,11 @@ import uuid
 
 from fastapi import HTTPException, status, Depends
 
-from menuapp.dao.schemas.submenu import SubmenuRead, SubmenuCreate, SubmenuUpdate
+from menuapp.dao.schemas.submenu import (
+    SubmenuRead,
+    SubmenuCreate,
+    SubmenuUpdate
+)
 from menuapp.dao.submenu import SubmenuDao, get_submenu_dao
 from menuapp.exceptions.not_existent import ItemNotFound
 
@@ -89,7 +93,9 @@ class SubmenuService:
                 )
 
                 if not updated_submenu:
-                    raise ItemNotFound(f"submenu with: id {submenu_id} not found")
+                    raise ItemNotFound(
+                        f"submenu with: id {submenu_id} not found"
+                    )
 
         except Exception as e:
             raise HTTPException(status_code=status.HTTP_200_OK,

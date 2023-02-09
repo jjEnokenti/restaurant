@@ -29,11 +29,9 @@ class SubmenuDao:
             self.submenu_model
         ).where(self.submenu_model.id == submenu_id)
 
-        submenu = self.session.execute(
+        return self.session.execute(
             statement=statement
         ).scalar_one_or_none()
-
-        return submenu
 
     def get_all(self, menu_id: uuid.UUID) -> list[row]:
         """ get all submenus """
@@ -46,16 +44,15 @@ class SubmenuDao:
         ).group_by(
             self.submenu_model.id
         ).outerjoin(
-            self.dish_model, self.dish_model.submenu_id == self.submenu_model.id
+            self.dish_model,
+            self.dish_model.submenu_id == self.submenu_model.id
         ).where(
             self.submenu_model.menu_id == menu_id
         )
 
-        submenus = self.session.execute(
+        return self.session.execute(
             statement=statement
         ).all()
-
-        return submenus
 
     def get_single_by_id(self, submenu_id: uuid.UUID) -> row or None:
         """ get single submenu by id """
@@ -68,16 +65,15 @@ class SubmenuDao:
         ).group_by(
             self.submenu_model.id
         ).outerjoin(
-            self.dish_model, self.dish_model.submenu_id == self.submenu_model.id
+            self.dish_model,
+            self.dish_model.submenu_id == self.submenu_model.id
         ).where(
             self.submenu_model.id == submenu_id
         )
 
-        submenu = self.session.execute(
+        return self.session.execute(
             statement=statement
         ).one_or_none()
-
-        return submenu
 
     def create(
             self,

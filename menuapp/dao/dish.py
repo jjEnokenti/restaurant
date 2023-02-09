@@ -28,11 +28,9 @@ class DishDao:
             self.dish_model
         ).where(self.dish_model.id == dish_id)
 
-        dish = self.session.execute(
+        return self.session.execute(
             statement=statement
         ).scalar_one_or_none()
-
-        return dish
 
     def get_all(self, submenu_id: uuid.UUID) -> list[row]:
         """ get all dishes """
@@ -43,11 +41,9 @@ class DishDao:
             self.dish_model.submenu_id == submenu_id
         )
 
-        dishes = self.session.execute(
+        return self.session.execute(
             statement=statement
         ).all()
-
-        return dishes
 
     def get_single_by_id(self, dish_id: uuid.UUID) -> row or None:
         """ get single dish by id """
@@ -58,11 +54,9 @@ class DishDao:
             self.dish_model.id == dish_id
         )
 
-        dish = self.session.execute(
+        return self.session.execute(
             statement=statement
         ).one_or_none()
-
-        return dish
 
     def create(
             self,

@@ -44,7 +44,7 @@ def get_menu_by_id(
     '/menus',
     response_model=m.MenuRead,
     summary='create new menu',
-    description='creates a menu, return detailed response with a new menu',
+    description='return detailed response with a new menu',
     status_code=status.HTTP_201_CREATED
 )
 def create_menu(
@@ -60,7 +60,7 @@ def create_menu(
     '/menus/{menu_id}',
     response_model=m.MenuRead,
     summary='update menu by id',
-    description='updates menu by id, returns detailed response with updated menu',
+    description='returns detailed response with updated menu',
     status_code=status.HTTP_200_OK
 )
 def update_menu_by_id(

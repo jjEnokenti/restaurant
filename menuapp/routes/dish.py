@@ -1,11 +1,9 @@
 import uuid
 
 from fastapi import APIRouter, Depends, status
-from sqlalchemy.orm import Session
 
-from menuapp.services.dish import DishService, get_dish_service
-from menuapp.dependences import get_db
 from menuapp.dao.schemas import dish as d
+from menuapp.services.dish import DishService, get_dish_service
 
 dish_route = APIRouter()
 
@@ -47,7 +45,7 @@ def get_dish_by_id(
     "/dishes",
     response_model=d.DishRead,
     summary='create new dish',
-    description='creates a dish, return detailed response with a new dish',
+    description='return detailed response with a new dish',
     status_code=status.HTTP_201_CREATED
 )
 def create_dish(
@@ -65,7 +63,7 @@ def create_dish(
     "/dishes/{dish_id}",
     response_model=d.DishRead,
     summary='update dish by id',
-    description='updates dish by id, returns detailed response with updated dish',
+    description='returns detailed response with updated dish',
     status_code=status.HTTP_200_OK
 )
 def update_dish_by_id(
