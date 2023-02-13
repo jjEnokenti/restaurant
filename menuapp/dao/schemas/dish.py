@@ -2,6 +2,12 @@ import uuid
 
 from pydantic import BaseModel
 
+__all__ = (
+    "DishCreate",
+    "DishRead",
+    "DishUpdate"
+)
+
 
 class DishBase(BaseModel):
     """

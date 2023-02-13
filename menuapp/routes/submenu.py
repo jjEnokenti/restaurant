@@ -2,7 +2,11 @@ import uuid
 
 from fastapi import APIRouter, Depends, status
 
-from menuapp.dao.schemas import submenu as s
+from menuapp.dao.schemas.submenu import (
+    SubmenuRead,
+    SubmenuCreate,
+    SubmenuUpdate
+)
 from menuapp.services.submenu import get_submenu_service, SubmenuService
 
 submenu_route = APIRouter()
@@ -10,50 +14,47 @@ submenu_route = APIRouter()
 
 @submenu_route.get(
     '/submenus',
-    response_model=list[s.SubmenuRead],
+    response_model=list[SubmenuRead],
     summary='get submenus',
     description='returns response all submenus or empty list',
     status_code=status.HTTP_200_OK
 )
-def get_all_submenus(
+async def get_all_submenus(
         menu_id: uuid.UUID,
         submenu_service: SubmenuService = Depends(get_submenu_service)
-) -> list[s.SubmenuRead]:
-    submenus = submenu_service.get_all(menu_id=menu_id)
-
-    if not submenus:
-        return []
-
-    return submenus
+) -> list[SubmenuRead]:
+    return await submenu_service.get_all(menu_id=menu_id)
 
 
 @submenu_route.get(
     '/submenus/{submenu_id}',
-    response_model=s.SubmenuRead,
+    response_model=SubmenuRead,
     summary='get single submenu by id',
     description='returns detailed response a submenu by id',
     status_code=status.HTTP_200_OK
 )
-def get_single_submenu_by_id(
+async def get_single_submenu_by_id(
         submenu_id: uuid.UUID,
         submenu_service: SubmenuService = Depends(get_submenu_service)
-) -> s.SubmenuRead:
-    return submenu_service.get_single_by_id(submenu_id=submenu_id)
+) -> SubmenuRead:
+    return await submenu_service.get_single_by_id(
+        submenu_id=submenu_id
+    )
 
 
 @submenu_route.post(
     '/submenus',
-    response_model=s.SubmenuRead,
+    response_model=SubmenuRead,
     summary='create new submenu',
     description='return detailed response with a new submenu',
     status_code=status.HTTP_201_CREATED
 )
-def create_submenu(
+async def create_submenu(
         menu_id: uuid.UUID,
-        create_data: s.SubmenuCreate,
+        create_data: SubmenuCreate,
         submenu_service: SubmenuService = Depends(get_submenu_service)
-) -> s.SubmenuCreate:
-    return submenu_service.create(
+) -> SubmenuRead:
+    return await submenu_service.create(
         menu_id=menu_id,
         create_data=create_data
     )
@@ -61,17 +62,17 @@ def create_submenu(
 
 @submenu_route.patch(
     '/submenus/{submenu_id}',
-    response_model=s.SubmenuRead,
+    response_model=SubmenuRead,
     summary='update submenu by id',
     description='returns detailed response with updated submenu',
     status_code=status.HTTP_200_OK
 )
-def update_submenu_by_id(
+async def update_submenu_by_id(
         submenu_id: uuid.UUID,
-        update_data: s.SubmenuUpdate,
+        update_data: SubmenuUpdate,
         submenu_service: SubmenuService = Depends(get_submenu_service)
-) -> s.SubmenuUpdate:
-    return submenu_service.update(
+) -> SubmenuUpdate:
+    return await submenu_service.update(
         submenu_id=submenu_id,
         update_data=update_data
     )
@@ -83,10 +84,10 @@ def update_submenu_by_id(
     description='delete submenu by id, return status response information',
     status_code=status.HTTP_200_OK
 )
-def delete_submenu_by_id(
+async def delete_submenu_by_id(
         submenu_id: uuid.UUID,
         submenu_service: SubmenuService = Depends(get_submenu_service)
 ) -> str:
-    submenu_service.delete(submenu_id=submenu_id)
+    await submenu_service.delete(submenu_id=submenu_id)
 
     return f"submenu {submenu_id} was deleted"

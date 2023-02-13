@@ -2,12 +2,12 @@ import uuid
 
 from fastapi import Depends
 from sqlalchemy import select, func
-from sqlalchemy.engine import row
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from menuapp.dao.models import dish as d, submenu as s
+from menuapp.dao.models.dish import Dish
+from menuapp.dao.models.submenu import Submenu
 from menuapp.dao.schemas.submenu import SubmenuCreate, SubmenuUpdate
-from menuapp.dependences import get_db
+from menuapp.dependencies import get_db
 
 __all__ = (
     'get_submenu_dao',
@@ -16,24 +16,27 @@ __all__ = (
 
 
 class SubmenuDao:
-    submenu_model: s.Submenu = s.Submenu
-    dish_model: d.Dish = d.Dish
+    submenu_model: Submenu = Submenu
+    dish_model: Dish = Dish
 
-    def __init__(self, session: Session):
+    def __init__(self, session: AsyncSession):
         self.session = session
 
-    def __get(self, submenu_id: uuid.UUID) -> submenu_model:
+    async def __get(self, submenu_id: uuid.UUID) -> Submenu:
         """ get submenu scalar data """
 
         statement = select(
             self.submenu_model
         ).where(self.submenu_model.id == submenu_id)
 
-        return self.session.execute(
+        result = await self.session.execute(
             statement=statement
-        ).scalar_one_or_none()
+        )
+        submenu: Submenu = result.scalar_one_or_none()
 
-    def get_all(self, menu_id: uuid.UUID) -> list[row]:
+        return submenu
+
+    async def get_all(self, menu_id: uuid.UUID) -> list[Submenu]:
         """ get all submenus """
 
         statement = select(
@@ -50,11 +53,17 @@ class SubmenuDao:
             self.submenu_model.menu_id == menu_id
         )
 
-        return self.session.execute(
+        result = await self.session.execute(
             statement=statement
-        ).all()
+        )
+        submenus: list[Submenu] = result.all()
 
-    def get_single_by_id(self, submenu_id: uuid.UUID) -> row or None:
+        return submenus
+
+    async def get_single_by_id(
+            self,
+            submenu_id: uuid.UUID
+    ) -> Submenu | None:
         """ get single submenu by id """
 
         statement = select(
@@ -71,15 +80,18 @@ class SubmenuDao:
             self.submenu_model.id == submenu_id
         )
 
-        return self.session.execute(
+        result = await self.session.execute(
             statement=statement
-        ).one_or_none()
+        )
+        submenu: Submenu = result.one_or_none()
 
-    def create(
+        return submenu
+
+    async def create(
             self,
             menu_id: uuid.UUID,
             data: SubmenuCreate
-    ) -> SubmenuCreate:
+    ) -> Submenu:
         """ insert new submenu """
 
         new_submenu = self.submenu_model(
@@ -90,14 +102,14 @@ class SubmenuDao:
 
         return new_submenu
 
-    def update(
+    async def update(
             self,
             submenu_id: uuid.UUID,
             data: SubmenuUpdate
-    ) -> SubmenuUpdate:
+    ) -> Submenu:
         """ update single submenu by id """
 
-        updated_submenu = self.__get(
+        updated_submenu = await self.__get(
             submenu_id=submenu_id
         )
         if updated_submenu:
@@ -107,21 +119,21 @@ class SubmenuDao:
 
         return updated_submenu
 
-    def delete(self, submenu_id: uuid.UUID) -> bool:
+    async def delete(self, submenu_id: uuid.UUID) -> bool:
         """ delete single submenu by id from db """
 
-        submenu = self.__get(
+        submenu = await self.__get(
             submenu_id=submenu_id
         )
 
         if submenu:
-            self.session.delete(submenu)
+            await self.session.delete(submenu)
             return True
 
         return False
 
 
-def get_submenu_dao(
-        session: Session = Depends(get_db)
+async def get_submenu_dao(
+        session: AsyncSession = Depends(get_db)
 ) -> SubmenuDao:
     return SubmenuDao(session=session)

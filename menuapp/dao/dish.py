@@ -2,12 +2,11 @@ import uuid
 
 from fastapi import Depends
 from sqlalchemy import select
-from sqlalchemy.engine import row
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from menuapp.dao.models import dish as d
+from menuapp.dao.models.dish import Dish
 from menuapp.dao.schemas.dish import DishCreate, DishUpdate
-from menuapp.dependences import get_db
+from menuapp.dependencies import get_db
 
 __all__ = (
     'DishDao',
@@ -16,36 +15,48 @@ __all__ = (
 
 
 class DishDao:
-    dish_model: d.Dish = d.Dish
+    dish_model: Dish = Dish
 
-    def __init__(self, session: Session):
+    def __init__(self, session: AsyncSession):
         self.session = session
 
-    def __get(self, dish_id: uuid.UUID) -> dish_model:
+    async def __get(self, dish_id: uuid.UUID) -> Dish:
         """ get dish scalar data """
 
         statement = select(
             self.dish_model
         ).where(self.dish_model.id == dish_id)
 
-        return self.session.execute(
+        result = await self.session.execute(
             statement=statement
-        ).scalar_one_or_none()
+        )
+        dish: Dish = result.scalar_one_or_none()
 
-    def get_all(self, submenu_id: uuid.UUID) -> list[row]:
+        return dish
+
+    async def get_all(self, submenu_id: uuid.UUID) -> list[Dish]:
         """ get all dishes """
 
         statement = select(
-            self.dish_model
+            self.dish_model.id,
+            self.dish_model.title,
+            self.dish_model.description,
+            self.dish_model.price
         ).where(
             self.dish_model.submenu_id == submenu_id
         )
 
-        return self.session.execute(
+        result = await self.session.execute(
             statement=statement
-        ).all()
+        )
+        dishes: list[Dish] = result.all()
 
-    def get_single_by_id(self, dish_id: uuid.UUID) -> row or None:
+        return dishes
+
+    async def get_single_by_id(
+            self,
+            dish_id: uuid.UUID
+    ) -> Dish | None:
         """ get single dish by id """
 
         statement = select(
@@ -54,15 +65,18 @@ class DishDao:
             self.dish_model.id == dish_id
         )
 
-        return self.session.execute(
+        result = await self.session.execute(
             statement=statement
-        ).one_or_none()
+        )
+        dish: Dish = result.one_or_none()
 
-    def create(
+        return dish
+
+    async def create(
             self,
             submenu_id: uuid.UUID,
             data: DishCreate
-    ) -> DishCreate:
+    ) -> Dish:
         """ insert new dish """
 
         new_dish = self.dish_model(
@@ -73,38 +87,38 @@ class DishDao:
 
         return new_dish
 
-    def update(
+    async def update(
             self,
             dish_id: uuid.UUID,
             data: DishUpdate
-    ) -> DishUpdate:
+    ) -> Dish:
         """ update single dish by id """
 
-        updated_dish = self.__get(
+        updated_dish = await self.__get(
             dish_id=dish_id
         )
-        if dish_id:
+        if updated_dish:
             for key, value in data.dict(exclude_unset=True).items():
                 setattr(updated_dish, key, value)
             self.session.add(updated_dish)
 
         return updated_dish
 
-    def delete(self, dish_id: uuid.UUID):
+    async def delete(self, dish_id: uuid.UUID) -> bool:
         """ delete single dish by id """
 
-        dish = self.__get(
+        dish = await self.__get(
             dish_id=dish_id
         )
 
         if dish:
-            self.session.delete(dish)
+            await self.session.delete(dish)
             return True
 
         return False
 
 
-def get_dish_dao(
-        session: Session = Depends(get_db)
+async def get_dish_dao(
+        session: AsyncSession = Depends(get_db)
 ) -> DishDao:
     return DishDao(session=session)

@@ -2,12 +2,13 @@ import uuid
 
 from fastapi import Depends
 from sqlalchemy import select, func, distinct
-from sqlalchemy.engine import row
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from menuapp.dao.models import menu as m, submenu as s, dish as d
+from menuapp.dao.models.dish import Dish
+from menuapp.dao.models.menu import Menu
+from menuapp.dao.models.submenu import Submenu
 from menuapp.dao.schemas.menu import MenuCreate, MenuUpdate
-from menuapp.dependences import get_db
+from menuapp.dependencies import get_db
 
 __all__ = (
     'get_menu_dao',
@@ -16,25 +17,28 @@ __all__ = (
 
 
 class MenuDao:
-    menu_model: m.Menu = m.Menu
-    submenu_model: s.Submenu = s.Submenu
-    dish_model: d.Dish = d.Dish
+    menu_model: Menu = Menu
+    submenu_model: Submenu = Submenu
+    dish_model: Dish = Dish
 
-    def __init__(self, session: Session):
+    def __init__(self, session: AsyncSession):
         self.session = session
 
-    def __get(self, menu_id: uuid.UUID) -> menu_model:
+    async def __get(self, menu_id: uuid.UUID) -> Menu:
         """ get menu scalar data """
 
         statement = select(
             self.menu_model
         ).where(self.menu_model.id == menu_id)
 
-        return self.session.execute(
+        result = await self.session.execute(
             statement=statement
-        ).scalar_one_or_none()
+        )
+        menu: Menu = result.scalar_one_or_none()
 
-    def get_all(self) -> list[row]:
+        return menu
+
+    async def get_all(self) -> list[Menu]:
         """ get all menus """
 
         statement = select(
@@ -55,11 +59,14 @@ class MenuDao:
             self.menu_model.id
         )
 
-        return self.session.execute(
+        result = await self.session.execute(
             statement=statement
-        ).all()
+        )
+        menus: list[Menu] = result.all()
 
-    def get_single_by_id(self, menu_id: uuid.UUID) -> row:
+        return menus
+
+    async def get_single_by_id(self, menu_id: uuid.UUID) -> Menu:
         """ get single menu by id """
 
         statement = select(
@@ -80,11 +87,14 @@ class MenuDao:
             self.menu_model.id
         ).where(self.menu_model.id == menu_id)
 
-        return self.session.execute(
+        result = await self.session.execute(
             statement=statement
-        ).one_or_none()
+        )
+        menu: Menu = result.one_or_none()
 
-    def create(self, data: MenuCreate) -> MenuCreate:
+        return menu
+
+    async def create(self, data: MenuCreate) -> Menu:
         """ insert new menu """
 
         new_menu = self.menu_model(**data.dict())
@@ -92,14 +102,14 @@ class MenuDao:
 
         return new_menu
 
-    def update(
+    async def update(
             self,
             menu_id: uuid.UUID,
             data: MenuUpdate
-    ) -> MenuUpdate | None:
+    ) -> Menu | None:
         """ update single menu by id """
 
-        updated_menu = self.__get(menu_id=menu_id)
+        updated_menu = await self.__get(menu_id=menu_id)
         if updated_menu:
             for key, value in data.dict(exclude_unset=True).items():
                 setattr(updated_menu, key, value)
@@ -107,18 +117,18 @@ class MenuDao:
 
         return updated_menu
 
-    def delete(self, menu_id: uuid.UUID) -> bool:
+    async def delete(self, menu_id: uuid.UUID) -> bool:
         """ delete single menu by id """
-        menu = self.__get(menu_id=menu_id)
+        menu = await self.__get(menu_id=menu_id)
 
         if menu:
-            self.session.delete(menu)
+            await self.session.delete(menu)
             return True
 
         return False
 
 
-def get_menu_dao(
-        session: Session = Depends(get_db)
+async def get_menu_dao(
+        session: AsyncSession = Depends(get_db)
 ) -> MenuDao:
     return MenuDao(session=session)
