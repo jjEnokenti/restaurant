@@ -97,7 +97,7 @@ class DishService:
                     data=update_data
                 )
 
-            if updated_dish:
+            if not updated_dish:
                 raise ItemNotFound(
                     f"dish with: id {dish_id} not found"
                 )

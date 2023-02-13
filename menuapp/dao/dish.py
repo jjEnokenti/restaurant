@@ -60,7 +60,10 @@ class DishDao:
         """ get single dish by id """
 
         statement = select(
-            self.dish_model
+            self.dish_model.id,
+            self.dish_model.title,
+            self.dish_model.description,
+            self.dish_model.price
         ).where(
             self.dish_model.id == dish_id
         )
