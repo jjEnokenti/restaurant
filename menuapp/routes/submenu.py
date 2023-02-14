@@ -13,7 +13,7 @@ submenu_route = APIRouter()
 
 
 @submenu_route.get(
-    '/submenus',
+    '/submenus/',
     response_model=list[SubmenuRead],
     summary='get submenus',
     description='returns response all submenus or empty list',
@@ -27,7 +27,7 @@ async def get_all_submenus(
 
 
 @submenu_route.get(
-    '/submenus/{submenu_id}',
+    '/submenus/{submenu_id}/',
     response_model=SubmenuRead,
     summary='get single submenu by id',
     description='returns detailed response a submenu by id',
@@ -43,7 +43,7 @@ async def get_single_submenu_by_id(
 
 
 @submenu_route.post(
-    '/submenus',
+    '/submenus/',
     response_model=SubmenuRead,
     summary='create new submenu',
     description='return detailed response with a new submenu',
@@ -61,7 +61,7 @@ async def create_submenu(
 
 
 @submenu_route.patch(
-    '/submenus/{submenu_id}',
+    '/submenus/{submenu_id}/',
     response_model=SubmenuRead,
     summary='update submenu by id',
     description='returns detailed response with updated submenu',
@@ -79,7 +79,7 @@ async def update_submenu_by_id(
 
 
 @submenu_route.delete(
-    "/submenus/{submenu_id}",
+    "/submenus/{submenu_id}/",
     summary='delete submenu by id',
     description='delete submenu by id, return status response information',
     status_code=status.HTTP_200_OK

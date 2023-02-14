@@ -9,7 +9,7 @@ dish_route = APIRouter()
 
 
 @dish_route.get(
-    "/dishes",
+    "/dishes/",
     response_model=list[DishRead],
     summary='get dishes',
     description='returns response all dishes or empty list',
@@ -23,7 +23,7 @@ async def get_all_dishes(
 
 
 @dish_route.get(
-    "/dishes/{dish_id}",
+    "/dishes/{dish_id}/",
     response_model=DishRead,
     summary='get single dish by id',
     description='returns detailed response a dish by id',
@@ -37,7 +37,7 @@ async def get_dish_by_id(
 
 
 @dish_route.post(
-    "/dishes",
+    "/dishes/",
     response_model=DishRead,
     summary='create new dish',
     description='return detailed response with a new dish',
@@ -55,7 +55,7 @@ async def create_dish(
 
 
 @dish_route.patch(
-    "/dishes/{dish_id}",
+    "/dishes/{dish_id}/",
     response_model=DishRead,
     summary='update dish by id',
     description='returns detailed response with updated dish',
@@ -73,7 +73,7 @@ async def update_dish_by_id(
 
 
 @dish_route.delete(
-    "/dishes/{dish_id}",
+    "/dishes/{dish_id}/",
     summary='delete dish by id',
     description='delete dish by id, return status response information',
     status_code=status.HTTP_200_OK

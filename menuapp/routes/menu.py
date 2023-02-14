@@ -13,7 +13,7 @@ menu_route = APIRouter()
 
 
 @menu_route.get(
-    '/menus',
+    '/menus/',
     response_model=list[MenuRead],
     summary='get menus',
     description='returns response all menus or empty list',
@@ -26,7 +26,7 @@ async def get_all_menu(
 
 
 @menu_route.get(
-    '/menus/{menu_id}',
+    '/menus/{menu_id}/',
     response_model=MenuRead,
     summary='get single menu by id',
     description='returns detailed response a menu by id',
@@ -40,7 +40,7 @@ async def get_menu_by_id(
 
 
 @menu_route.post(
-    '/menus',
+    '/menus/',
     response_model=MenuRead,
     summary='create new menu',
     description='return detailed response with a new menu',
@@ -56,7 +56,7 @@ async def create_menu(
 
 
 @menu_route.patch(
-    '/menus/{menu_id}',
+    '/menus/{menu_id}/',
     response_model=MenuRead,
     summary='update menu by id',
     description='returns detailed response with updated menu',
@@ -74,7 +74,7 @@ async def update_menu_by_id(
 
 
 @menu_route.delete(
-    '/menus/{menu_id}',
+    '/menus/{menu_id}/',
     summary='delete menu by id',
     description='delete menu by id, return status response information',
     status_code=status.HTTP_200_OK
