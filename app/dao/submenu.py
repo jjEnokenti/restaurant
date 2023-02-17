@@ -4,10 +4,10 @@ from fastapi import Depends
 from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from menuapp.dao.models.dish import Dish
-from menuapp.dao.models.submenu import Submenu
-from menuapp.dao.schemas.submenu import SubmenuCreate, SubmenuUpdate
-from menuapp.dependencies import get_db
+from app.dao.models.dish import Dish
+from app.dao.models.submenu import Submenu
+from app.dao.schemas.submenu import SubmenuCreate, SubmenuUpdate
+from app.dependencies import get_db
 
 __all__ = (
     'get_submenu_dao',

@@ -2,12 +2,12 @@ import uuid
 
 from fastapi import APIRouter, Depends, status
 
-from menuapp.dao.schemas.submenu import (
+from app.dao.schemas.submenu import (
     SubmenuRead,
     SubmenuCreate,
     SubmenuUpdate
 )
-from menuapp.services.submenu import get_submenu_service, SubmenuService
+from app.services.submenu import get_submenu_service, SubmenuService
 
 submenu_route = APIRouter()
 

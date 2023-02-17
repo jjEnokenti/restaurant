@@ -1,36 +1,46 @@
-import pytest
-from fastapi.testclient import TestClient
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+import asyncio
 
-from menuapp.configs.config import TestConfig
-from menuapp.dao.models import Base
-from menuapp.dependences import get_db
+import pytest
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.pool import NullPool
+
+from app.configs.config import TestConfig
+from app.dao.models import Base
+from app.dependencies import get_db
 from run import app
 
-engine = create_engine(TestConfig.SQLALCHEMY_DATABASE_URL)
-TestingSessionLocal = sessionmaker(
-    autocommit=False,
-    autoflush=False,
-    bind=engine
+engine_test = create_async_engine(
+    TestConfig.SQLALCHEMY_DATABASE_URL,
+    poolclass=NullPool
 )
+async_session_maker = sessionmaker(
+    engine_test,
+    class_=AsyncSession,
+    expire_on_commit=False
+)
+Base.metadata.bind = engine_test
 
 
-def override_get_db():
-    try:
-        db = TestingSessionLocal()
-        yield db
-    finally:
-        db.close()
+async def override_get_db():
+    async with async_session_maker() as session:
+        yield session
 
 
-Base.metadata.drop_all(bind=engine)
-Base.metadata.create_all(bind=engine)
+app.dependency_overrides[get_db] = override_get_db
 
 
-@pytest.fixture
-def test_client():
-    app.dependency_overrides[get_db] = override_get_db
+@pytest.fixture(autouse=True, scope='module')
+async def prepare_database():
+    async with engine_test.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+    yield
+    async with engine_test.begin() as conn:
+        await conn.run_sync(Base.metadata.drop_all)
 
-    yield TestClient(app)
-    del app.dependency_overrides[get_db]
+
+@pytest.fixture(scope='session')
+def event_loop(request):
+    loop = asyncio.get_event_loop_policy().new_event_loop()
+    yield loop
+    loop.close()

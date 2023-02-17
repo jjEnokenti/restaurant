@@ -2,10 +2,10 @@ import uuid
 
 from fastapi import HTTPException, status, Depends
 
-from menuapp.dao.menu import MenuDao, get_menu_dao
-from menuapp.dao.models.menu import Menu
-from menuapp.dao.schemas.menu import MenuCreate, MenuUpdate
-from menuapp.exceptions.not_existent import ItemNotFound
+from app.dao.menu import MenuDao, get_menu_dao
+from app.dao.models.menu import Menu
+from app.dao.schemas.menu import MenuCreate, MenuUpdate
+from app.exceptions.not_existent import ItemNotFound
 
 __all__ = (
     'get_menu_service',

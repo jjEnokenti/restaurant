@@ -4,9 +4,9 @@ from fastapi import Depends
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from menuapp.dao.models.dish import Dish
-from menuapp.dao.schemas.dish import DishCreate, DishUpdate
-from menuapp.dependencies import get_db
+from app.dao.models.dish import Dish
+from app.dao.schemas.dish import DishCreate, DishUpdate
+from app.dependencies import get_db
 
 __all__ = (
     'DishDao',

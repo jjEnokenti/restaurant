@@ -2,10 +2,10 @@ import uuid
 
 from fastapi import HTTPException, status, Depends
 
-from menuapp.dao.dish import DishDao, get_dish_dao
-from menuapp.dao.models.dish import Dish
-from menuapp.dao.schemas.dish import DishCreate, DishUpdate
-from menuapp.exceptions.not_existent import ItemNotFound
+from app.dao.dish import DishDao, get_dish_dao
+from app.dao.models.dish import Dish
+from app.dao.schemas.dish import DishCreate, DishUpdate
+from app.exceptions.not_existent import ItemNotFound
 
 __all__ = (
     'DishService',

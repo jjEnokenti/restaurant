@@ -8,13 +8,13 @@ services:
       dockerfile: Dockerfile
     networks:
       - test_menu_app
-    env_file:
-      - .env.tests
+    environment:
+      HOST: test_postgres
+      USER: postgres
+      PASSWORD: password
+      TEST_DB_NAME: test_db
     entrypoint:
       sh -c "
-      cd alembic && mkdir version && cd .. &&
-      alembic revision --autogenerate -m 'first migrate into docker for testing' &&
-      alembic upgrade head &&
       pytest -vv
       "
     depends_on:
@@ -27,10 +27,14 @@ services:
     image: postgres:15.1-alpine
     networks:
       - test_menu_app
-    env_file:
-      - .env.tests
+    environment:
+      POSTGRES_DB: test_db
+      POSTGRES_PASSWORD: password
+      PGUSER: postgres
+      POSTGRES_INITDB_ARGS: "-A md5"
+      SQLALCHEMY_SILENCE_UBER_WARNING: 1
     expose:
-      - 5432
+      - 5434
     ports:
       - "5434:5432"
     healthcheck:
@@ -41,3 +45,4 @@ services:
 
 networks:
   test_menu_app:
+    driver: bridge

@@ -8,11 +8,11 @@ from sqlalchemy.ext.asyncio import AsyncEngine
 
 from alembic import context
 
-from menuapp.configs.config import BaseConfig
-from menuapp.dao.models import Base
-from menuapp.dao.models.menu import Menu  # noqa
-from menuapp.dao.models.submenu import Submenu  # noqa
-from menuapp.dao.models.dish import Dish  # noqa
+from app.configs.config import BaseConfig
+from app.dao.models import Base
+from app.dao.models.menu import Menu  # noqa
+from app.dao.models.submenu import Submenu  # noqa
+from app.dao.models.dish import Dish  # noqa
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

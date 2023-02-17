@@ -2,12 +2,12 @@ import uuid
 
 from fastapi import APIRouter, Depends, status
 
-from menuapp.dao.schemas.menu import (
+from app.dao.schemas.menu import (
     MenuCreate,
     MenuUpdate,
     MenuRead
 )
-from menuapp.services.menu import get_menu_service, MenuService
+from app.services.menu import get_menu_service, MenuService
 
 menu_route = APIRouter()
 

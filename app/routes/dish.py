@@ -2,8 +2,8 @@ import uuid
 
 from fastapi import APIRouter, Depends, status
 
-from menuapp.dao.schemas.dish import DishRead, DishCreate, DishUpdate
-from menuapp.services.dish import DishService, get_dish_service
+from app.dao.schemas.dish import DishRead, DishCreate, DishUpdate
+from app.services.dish import DishService, get_dish_service
 
 dish_route = APIRouter()
 

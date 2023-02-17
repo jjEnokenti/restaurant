@@ -3,5 +3,6 @@
 venv/
 .git/
 **.pytest_cache/
+
 .env
 alembic/versions/
